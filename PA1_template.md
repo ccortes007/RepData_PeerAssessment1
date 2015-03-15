@@ -1,4 +1,5 @@
-# Reproducible Research: Peer Assessment 1
+Reproducible Research: Peer Assessment 1
+==============================================
 
 ## Loading and preprocessing the data
 
@@ -26,7 +27,7 @@ names(a_date) <- c("date", "steps")
 hist(a_date$steps, main = "Total Number of Steps per day", xlab = "Steps per day", col = "red")
 ```
 
-![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
+![plot of chunk Block2](figure/Block2-1.png) 
 
 ```r
 # 3) Calculate and report the mean and median of the total number of steps taken per day
@@ -57,20 +58,15 @@ names(a_int) <- c("interval", "mean")
 plot(a_int$interval, a_int$mean, type="l" , xlab = "5 minute interval", ylab = "Average step taken")
 ```
 
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
+![plot of chunk Block3](figure/Block3-1.png) 
 
 ```r
 # 2) Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-a_int[a_int$steps == max(a_int$steps), "interval"]
+a_int[a_int$mean == max(a_int$mean), "interval"]
 ```
 
 ```
-## Warning in max(a_int$steps): no non-missing arguments to max; returning
-## -Inf
-```
-
-```
-## integer(0)
+## [1] 835
 ```
 
 ## Imputing missing values
@@ -115,7 +111,7 @@ names(a_filled) <- c("date", "steps")
 hist(a_filled$steps, main = "Total Number of Steps per day", xlab = "Steps per day", col = "blue")
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+![plot of chunk Block4](figure/Block4-1.png) 
 
 ```r
 mean(a_filled$steps)
@@ -141,47 +137,26 @@ median(a_filled$steps)
 #    indicating whether a given date is a weekday or weekend day
 # Adding week_day factor new column  
 a_fill$week_day <- as.factor(ifelse(weekdays(as.Date(a_fill$date)) == "Saturday" | weekdays(as.Date(a_fill$date)) == "Sunday", "weekend", "weekday"))
+```
 
+
+```r
 # Grouping by interval with mean of steps
 a_fill_int <- aggregate(x = a_fill[,c("steps")], by = list(a_fill$interval, a_fill$week_day), FUN = "mean")
-names(a_fill_int) <- c("interval", "week_day", "mean")
-
+names(a_fill_int) <- c("interval", "week_day", "Number_of_steps")
 # 2) Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) 
 #    and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
 
-par(mfrow = c(2,1)) 
-plot(a_fill_int[a_fill_int$week_day == "weekend", "interval"]
-    ,a_fill_int[a_fill_int$week_day == "weekend", "mean"]   
-    ,type="l" , main = "weekend" , xlab = "", ylab = "")
-plot(a_fill_int[a_fill_int$week_day == "weekday", "interval"]
-    ,a_fill_int[a_fill_int$week_day == "weekday", "mean"]    
-    ,type="l" , main = "weekday", xlab = "Interval", ylab = "Number of steps", col = "red")
 require(ggplot2)
 ```
 
 ```
 ## Loading required package: ggplot2
-## Find out what's changed in ggplot2 with
-## news(Version == "1.0.0", package = "ggplot2")
-```
-
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
-
-```r
-require(reshape)
-```
-
-```
-## Loading required package: reshape
-```
-
-```
-## Warning in library(package, lib.loc = lib.loc, character.only = TRUE,
-## logical.return = TRUE, : there is no package called 'reshape'
+## Need help? Try the ggplot2 mailing list: http://groups.google.com/group/ggplot2.
 ```
 
 ```r
-ggplot(a_fill_int, aes(interval, mean)) + geom_line() + facet_grid(week_day ~.)
+ggplot(a_fill_int, aes(interval, Number_of_steps)) + geom_line(colour = "blue") + facet_grid(week_day ~.)
 ```
 
-![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-2.png) 
+![plot of chunk Block6](figure/Block6-1.png) 

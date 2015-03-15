@@ -1,7 +1,8 @@
-# Reproducible Research: Peer Assessment 1
+Reproducible Research: Peer Assessment 1
+==============================================
 
 ## Loading and preprocessing the data
-```{r}
+```{r Block1}
 setwd("C:/Users/ccortes/Documents/GitHub/RepData_PeerAssessment1")
 zfile <- "C:/Users/ccortes/Documents/GitHub/RepData_PeerAssessment1/activity.zip"
 dfile <- "C:/Users/ccortes/Documents/GitHub/RepData_PeerAssessment1/activity.csv"
@@ -13,7 +14,7 @@ activity <- read.csv(dfile, header = TRUE)
 ```
 
 ## What is mean total number of steps taken per day?
-```{r}
+```{r Block2}
 # Rows with values (not NA)
 a <- activity[!is.na(activity$steps),]
 
@@ -31,7 +32,7 @@ median(a_date$steps)
 ```
 
 ## What is the average daily activity pattern?
-```{r}
+```{r Block3}
 # Grouping by interval with mean of steps
 a_int <- aggregate(x = a[,c("steps")], by = list(a$interval), FUN = "mean")
 names(a_int) <- c("interval", "mean")
@@ -41,12 +42,12 @@ names(a_int) <- c("interval", "mean")
 plot(a_int$interval, a_int$mean, type="l" , xlab = "5 minute interval", ylab = "Average step taken")
 
 # 2) Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-a_int[a_int$steps == max(a_int$steps), "interval"]
+a_int[a_int$mean == max(a_int$mean), "interval"]
 
 ```
 
 ## Imputing missing values
-```{r}
+```{r Block4}
 # Rows without value (na)
 # 1) Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 a_na  <- activity[is.na(activity$steps),]
@@ -82,28 +83,21 @@ median(a_filled$steps)
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r}
+```{r Block5}
 # 1) Create a new factor variable in the dataset with two levels - "weekday" and "weekend" 
 #    indicating whether a given date is a weekday or weekend day
 # Adding week_day factor new column  
 a_fill$week_day <- as.factor(ifelse(weekdays(as.Date(a_fill$date)) == "Saturday" | weekdays(as.Date(a_fill$date)) == "Sunday", "weekend", "weekday"))
+```
 
+```{r Block6, fig.height = 4, fig.width = 6 }
 # Grouping by interval with mean of steps
 a_fill_int <- aggregate(x = a_fill[,c("steps")], by = list(a_fill$interval, a_fill$week_day), FUN = "mean")
-names(a_fill_int) <- c("interval", "week_day", "mean")
-
+names(a_fill_int) <- c("interval", "week_day", "Number_of_steps")
 # 2) Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) 
 #    and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). 
 
-par(mfrow = c(2,1)) 
-plot(a_fill_int[a_fill_int$week_day == "weekend", "interval"]
-    ,a_fill_int[a_fill_int$week_day == "weekend", "mean"]   
-    ,type="l" , main = "weekend" , xlab = "", ylab = "")
-plot(a_fill_int[a_fill_int$week_day == "weekday", "interval"]
-    ,a_fill_int[a_fill_int$week_day == "weekday", "mean"]    
-    ,type="l" , main = "weekday", xlab = "Interval", ylab = "Number of steps", col = "red")
 require(ggplot2)
-require(reshape)
-ggplot(a_fill_int, aes(interval, mean)) + geom_line() + facet_grid(week_day ~.)
+ggplot(a_fill_int, aes(interval, Number_of_steps)) + geom_line(colour = "blue") + facet_grid(week_day ~.)
 
 ```
