@@ -1,7 +1,8 @@
 # Reproducible Research: Peer Assessment 1
 
 ## Loading and preprocessing the data
-```{r}
+
+```r
 setwd("C:/Users/ccortes/Documents/GitHub/RepData_PeerAssessment1")
 zfile <- "C:/Users/ccortes/Documents/GitHub/RepData_PeerAssessment1/activity.zip"
 dfile <- "C:/Users/ccortes/Documents/GitHub/RepData_PeerAssessment1/activity.csv"
@@ -9,11 +10,11 @@ if(!file.exists(dfile)) {
         unzip(zfile, exdir='.')
 }
 activity <- read.csv(dfile, header = TRUE)
-
 ```
 
 ## What is mean total number of steps taken per day?
-```{r}
+
+```r
 # Rows with values (not NA)
 a <- activity[!is.na(activity$steps),]
 
@@ -23,15 +24,30 @@ names(a_date) <- c("date", "steps")
 
 # 2) Make a histogram of the total number of steps taken each day
 hist(a_date$steps, main = "Total Number of Steps per day", xlab = "Steps per day", col = "red")
+```
 
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
+
+```r
 # 3) Calculate and report the mean and median of the total number of steps taken per day
 mean(a_date$steps)
-median(a_date$steps)
+```
 
+```
+## [1] 10766.19
+```
+
+```r
+median(a_date$steps)
+```
+
+```
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
-```{r}
+
+```r
 # Grouping by interval with mean of steps
 a_int <- aggregate(x = a[,c("steps")], by = list(a$interval), FUN = "mean")
 names(a_int) <- c("interval", "mean")
@@ -39,19 +55,41 @@ names(a_int) <- c("interval", "mean")
 # 1) Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, 
 #    averaged across all days (y-axis)
 plot(a_int$interval, a_int$mean, type="l" , xlab = "5 minute interval", ylab = "Average step taken")
+```
 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
+
+```r
 # 2) Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 a_int[a_int$steps == max(a_int$steps), "interval"]
+```
 
+```
+## Warning in max(a_int$steps): no non-missing arguments to max; returning
+## -Inf
+```
+
+```
+## integer(0)
 ```
 
 ## Imputing missing values
-```{r}
+
+```r
 # Rows without value (na)
 # 1) Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 a_na  <- activity[is.na(activity$steps),]
 str(a_na)
+```
 
+```
+## 'data.frame':	2304 obs. of  3 variables:
+##  $ steps   : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ date    : Factor w/ 61 levels "2012-10-01","2012-10-02",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
+```
+
+```r
 # 2) Devise a strategy for filling in all of the missing values in the dataset. 
 #    The strategy does not need to be sophisticated. 
 #    For example, you could use the mean/median for that day, 
@@ -75,14 +113,30 @@ a_filled <- aggregate(x = a_fill[,c("steps")], by = list(a_fill$date), FUN = "su
 names(a_filled) <- c("date", "steps")
 
 hist(a_filled$steps, main = "Total Number of Steps per day", xlab = "Steps per day", col = "blue")
-mean(a_filled$steps)
-median(a_filled$steps)
+```
 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+
+```r
+mean(a_filled$steps)
+```
+
+```
+## [1] 10765.64
+```
+
+```r
+median(a_filled$steps)
+```
+
+```
+## [1] 10762
 ```
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r}
+
+```r
 # 1) Create a new factor variable in the dataset with two levels - "weekday" and "weekend" 
 #    indicating whether a given date is a weekday or weekend day
 # Adding week_day factor new column  
@@ -103,7 +157,31 @@ plot(a_fill_int[a_fill_int$week_day == "weekday", "interval"]
     ,a_fill_int[a_fill_int$week_day == "weekday", "mean"]    
     ,type="l" , main = "weekday", xlab = "Interval", ylab = "Number of steps", col = "red")
 require(ggplot2)
-require(reshape)
-ggplot(a_fill_int, aes(interval, mean)) + geom_line() + facet_grid(week_day ~.)
+```
 
 ```
+## Loading required package: ggplot2
+## Find out what's changed in ggplot2 with
+## news(Version == "1.0.0", package = "ggplot2")
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
+
+```r
+require(reshape)
+```
+
+```
+## Loading required package: reshape
+```
+
+```
+## Warning in library(package, lib.loc = lib.loc, character.only = TRUE,
+## logical.return = TRUE, : there is no package called 'reshape'
+```
+
+```r
+ggplot(a_fill_int, aes(interval, mean)) + geom_line() + facet_grid(week_day ~.)
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-2.png) 
